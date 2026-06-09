@@ -6,7 +6,6 @@
   <meta name="description" content="A focused, handbook-grounded two-day study companion for the INCOSE ASEP exam.">
   <title>ASEP Sprint — 2-Day Exam Prep</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="question-bank.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -23,7 +22,7 @@
     <div class="source-card">
       <span class="eyebrow">SOURCE LOCKED</span>
       <strong>SE Handbook</strong>
-      <span>Fifth Edition · 1,000 questions</span>
+      <span>Fifth Edition · 2023</span>
       <small>All learning content and explanations are derived from your uploaded handbook.</small>
     </div>
   </aside>
@@ -41,17 +40,12 @@
           <span class="pill">48 HOURS · ACTIVE RECALL</span>
           <h2>You have read it once.<br><em>Now make it stick.</em></h2>
           <p>A focused path through the Fifth Edition: retrieve, check the handbook rationale, then repeat what you miss.</p>
-          <div class="start-row"><label>Session size<select id="session-size"><option value="10">10 questions</option><option value="25" selected>25 questions</option><option value="50">50 questions</option><option value="100">100 questions</option></select></label><button class="primary" id="start-practice">Start unseen questions <span>→</span></button></div>
+          <button class="primary" id="start-practice">Start focused practice <span>→</span></button>
         </div>
         <div class="hero-score">
           <div class="ring" id="mastery-ring"><span id="mastery-value">0%</span><small>mastery</small></div>
           <p>Built from your answered questions</p>
         </div>
-      </div>
-
-      <div class="bank-strip">
-        <div><span class="eyebrow">QUESTION BANK</span><strong>1,000</strong><small>original practice questions</small></div>
-        <div id="bank-breakdown" class="bank-breakdown" aria-label="Question count by domain"></div>
       </div>
 
       <div class="section-heading"><div><span class="eyebrow">THE PLAN</span><h3>Two days. Four passes.</h3></div><span class="quiet">About 6 focused hours each day</span></div>
@@ -75,7 +69,7 @@
       <div class="metrics">
         <article><span>ACCURACY</span><strong id="accuracy">—</strong><small>Across all attempts</small></article>
         <article><span>RETRY QUEUE</span><strong id="retry-total">0</strong><small>Questions to revisit</small></article>
-        <article><span>BANK PROGRESS</span><strong id="coverage">0/1000</strong><small>Unique questions attempted</small></article>
+        <article><span>COVERAGE</span><strong id="coverage">0/5</strong><small>Handbook domains touched</small></article>
       </div>
     </section>
 
