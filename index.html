@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A focused, handbook-grounded two-day study companion for the INCOSE ASEP exam.">
+  <title>ASEP Sprint — 2-Day Exam Prep</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="question-bank.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#dashboard" aria-label="ASEP Sprint home">
+      <span class="brand-mark">A</span><span>ASEP <strong>SPRINT</strong></span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <button class="nav-item active" data-view="dashboard"><span>⌂</span>Dashboard</button>
+      <button class="nav-item" data-view="practice"><span>◎</span>Practice</button>
+      <button class="nav-item" data-view="review"><span>↻</span>Review misses <b id="miss-count">0</b></button>
+      <button class="nav-item" data-view="cram"><span>≡</span>Rapid review</button>
+    </nav>
+    <div class="source-card">
+      <span class="eyebrow">SOURCE LOCKED</span>
+      <strong>SE Handbook</strong>
+      <span>Fifth Edition · 1,000 questions</span>
+      <small>All learning content and explanations are derived from your uploaded handbook.</small>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <button class="menu" aria-label="Toggle menu">☰</button>
+      <div><span class="eyebrow">YOUR EXAM SPRINT</span><h1 id="view-title">Dashboard</h1></div>
+      <div class="streak"><span>◒</span><div><strong id="answered-total">0</strong><small>answered</small></div></div>
+    </header>
+
+    <section id="dashboard" class="view active">
+      <div class="hero">
+        <div>
+          <span class="pill">48 HOURS · ACTIVE RECALL</span>
+          <h2>You have read it once.<br><em>Now make it stick.</em></h2>
+          <p>A focused path through the Fifth Edition: retrieve, check the handbook rationale, then repeat what you miss.</p>
+          <div class="start-row"><label>Session size<select id="session-size"><option value="10">10 questions</option><option value="25" selected>25 questions</option><option value="50">50 questions</option><option value="100">100 questions</option></select></label><button class="primary" id="start-practice">Start unseen questions <span>→</span></button></div>
+        </div>
+        <div class="hero-score">
+          <div class="ring" id="mastery-ring"><span id="mastery-value">0%</span><small>mastery</small></div>
+          <p>Built from your answered questions</p>
+        </div>
+      </div>
+
+      <div class="bank-strip">
+        <div><span class="eyebrow">QUESTION BANK</span><strong>1,000</strong><small>original practice questions</small></div>
+        <div id="bank-breakdown" class="bank-breakdown" aria-label="Question count by domain"></div>
+      </div>
+
+      <div class="section-heading"><div><span class="eyebrow">THE PLAN</span><h3>Two days. Four passes.</h3></div><span class="quiet">About 6 focused hours each day</span></div>
+      <div class="day-grid">
+        <article class="day-card today">
+          <div class="day-label"><span>DAY 01</span><b>Build the map</b></div>
+          <div class="session"><i>01</i><div><strong>Foundations & life cycles</strong><small>45 min · Ch. 1–2.2</small></div><button data-topic="foundations" aria-label="Practice foundations">→</button></div>
+          <div class="session"><i>02</i><div><strong>Process groups</strong><small>90 min · Ch. 2.3</small></div><button data-topic="processes" aria-label="Practice processes">→</button></div>
+          <div class="session"><i>03</i><div><strong>Technical processes</strong><small>90 min · pp. 101–158</small></div><button data-topic="technical" aria-label="Practice technical processes">→</button></div>
+          <div class="session"><i>04</i><div><strong>Missed-question loop</strong><small>45 min · no notes first</small></div><button data-review aria-label="Review misses">→</button></div>
+        </article>
+        <article class="day-card">
+          <div class="day-label"><span>DAY 02</span><b>Apply under pressure</b></div>
+          <div class="session"><i>05</i><div><strong>Analyses & methods</strong><small>75 min · Ch. 3</small></div><button data-topic="methods" aria-label="Practice analyses and methods">→</button></div>
+          <div class="session"><i>06</i><div><strong>Tailoring & application</strong><small>60 min · Ch. 4</small></div><button data-topic="tailoring" aria-label="Practice tailoring">→</button></div>
+          <div class="session"><i>07</i><div><strong>Mixed exam simulation</strong><small>60 min · all domains</small></div><button data-topic="mixed" aria-label="Start mixed quiz">→</button></div>
+          <div class="session"><i>08</i><div><strong>Rapid review</strong><small>30 min · distinctions only</small></div><button data-cram aria-label="Open rapid review">→</button></div>
+        </article>
+      </div>
+
+      <div class="metrics">
+        <article><span>ACCURACY</span><strong id="accuracy">—</strong><small>Across all attempts</small></article>
+        <article><span>RETRY QUEUE</span><strong id="retry-total">0</strong><small>Questions to revisit</small></article>
+        <article><span>BANK PROGRESS</span><strong id="coverage">0/1000</strong><small>Unique questions attempted</small></article>
+      </div>
+    </section>
+
+    <section id="practice" class="view">
+      <div class="practice-head">
+        <div><span class="eyebrow" id="quiz-kicker">FOCUSED PRACTICE</span><h2 id="quiz-title">Mixed handbook practice</h2></div>
+        <div class="quiz-progress"><span id="question-number">1 / 10</span><div><i id="quiz-bar"></i></div></div>
+      </div>
+      <article class="question-card">
+        <div class="question-meta"><span id="question-domain">FOUNDATIONS</span><button id="quit-quiz">Exit session</button></div>
+        <h3 id="question-text"></h3>
+        <div id="answers" class="answers"></div>
+        <div id="feedback" class="feedback" hidden>
+          <div class="feedback-title"><span id="feedback-icon"></span><strong id="feedback-heading"></strong></div>
+          <p id="explanation"></p>
+          <div class="reference"><span>HANDBOOK REFERENCE</span><b id="reference"></b></div>
+          <div class="confidence">
+            <span>How solid did that feel?</span>
+            <button data-confidence="1">Guess</button><button data-confidence="2">Somewhat</button><button data-confidence="3">Knew it</button>
+          </div>
+          <button class="primary" id="next-question">Next question <span>→</span></button>
+        </div>
+      </article>
+    </section>
+
+    <section id="review" class="view empty-state">
+      <span class="empty-icon">↻</span><h2 id="review-title">Your retry queue is clear.</h2>
+      <p id="review-copy">Missed or low-confidence questions will collect here for a targeted second pass.</p>
+      <button class="primary" id="review-action">Practice mixed questions <span>→</span></button>
+    </section>
+
+    <section id="cram" class="view">
+      <div class="cram-intro"><span class="eyebrow">LAST-PASS MEMORY MAP</span><h2>Distinctions worth retrieving cold.</h2><p>Say the answer before opening each card. These are condensed from the uploaded Fifth Edition; use the cited pages to return to context.</p></div>
+      <div id="cram-grid" class="cram-grid"></div>
+    </section>
+  </main>
+</body>
+</html>

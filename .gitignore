@@ -1,0 +1,2 @@
+# Handbook source documents are managed separately from application PRs.
+Handbook/*.pdf
