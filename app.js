@@ -73,7 +73,41 @@ function answer(choice){
  $$('.answer').forEach((b,i)=>{b.disabled=true;if(i===current.c)b.classList.add('correct');if(i===choice&&!ok)b.classList.add('wrong')});$('#feedback').hidden=false;$('#feedback-icon').textContent=ok?'✓':'!';$('#feedback-heading').textContent=ok?'Correct — lock in the distinction.':'Not quite — retrieve the rationale.';$('#feedback-icon').style.background=ok?'var(--mint)':'#fae4df';$('#feedback-icon').style.color=ok?'var(--green)':'var(--red)';$('#explanation').textContent=current.e;$('#reference').textContent=current.r;save();
 }
 function finishQuiz(){showView('dashboard');const hero=$('.hero');hero.animate([{transform:'scale(.99)',opacity:.75},{transform:'scale(1)',opacity:1}],{duration:400});}
+const courseActivities=[
+ {title:'Foundations & life-cycle map',detail:'Read cited summaries, then retrieve key terms · Ch. 1–2.2',topic:'foundations'},
+ {title:'Agreement & enabling processes',detail:'Contrast purpose, inputs, and outcomes · §2.3.2–2.3.3',topic:'processes'},
+ {title:'Technical management processes',detail:'Practice decisions, risk, configuration, and measures · §2.3.4',topic:'processes'},
+ {title:'Needs, requirements & architecture',detail:'Learn the sequence and exam-critical distinctions · §2.3.5.1–5',topic:'technical'},
+ {title:'Integration, verification & validation',detail:'Retrieve what each process proves · §2.3.5.8–11',topic:'technical'},
+ {title:'Methods & cross-cutting analyses',detail:'Apply handbook methods in exam-style scenarios · Ch. 3',topic:'methods'},
+ {title:'Tailoring & application contexts',detail:'Choose rigor for context without losing outcomes · Ch. 4',topic:'tailoring'},
+ {title:'Closed-book mixed checkpoint',detail:'Answer handbook-only questions, then study every rationale',topic:'mixed'},
+ {title:'Targeted miss recovery',detail:'Retry weak areas without notes before checking the handbook',topic:'review'},
+ {title:'Final exam simulation',detail:'Mixed recall across all handbook domains under pressure',topic:'mixed'},
+ {title:'Rapid distinction review',detail:'Say each answer aloud before revealing it',topic:'cram'}
+];
+const courseIntensity={1:[5,5],2:[4,3],3:[3,2.5],7:[2,1.5],14:[2,1]};
+function getCourseSessions(days){
+ const count=Math.max(11,courseIntensity[days][0]*days);const middle=courseActivities.slice(0,7);const sessions=[];
+ for(let i=0;i<count-4;i++)sessions.push(middle[i%middle.length]);
+ return [...sessions,...courseActivities.slice(7)];
+}
+function renderCourse(days,completed=[]){
+ const sessions=getCourseSessions(days),perDay=Math.ceil(sessions.length/days);$('#plan-title').textContent=`Your ${days}-day handbook exam course`;
+ $('#plan-summary').textContent=`${sessions.length} focused sessions · about ${courseIntensity[days][1]}${courseIntensity[days][1]%1?'':' '} hour${courseIntensity[days][1]===1?'':'s'} per day · active recall before review`;
+ const groups=Array.from({length:days},(_,d)=>sessions.slice(d*perDay,Math.min((d+1)*perDay,sessions.length)));
+ $('#course-days').innerHTML=groups.map((items,d)=>`<article class="course-day"><div class="course-day-heading"><span>DAY ${String(d+1).padStart(2,'0')}</span><strong>${d===0?'Build the map':d===days-1?'Prove readiness':'Retrieve & apply'}</strong></div><div>${items.map((item,i)=>{const id=d*perDay+i,done=completed.includes(id);return `<div class="course-session${done?' done':''}" data-session="${id}"><button class="complete-session" aria-label="Mark ${item.title} complete">✓</button><div><strong>${item.title}</strong><small>${item.detail}</small></div><button class="start-session" data-course-topic="${item.topic}">${item.topic==='cram'?'Open review':'Start'} →</button></div>`}).join('')}</div></article>`).join('');
+ const updateProgress=()=>{const done=$$('.course-session.done').length;$('#course-progress-bar').style.width=`${done/sessions.length*100}%`;$('#course-progress-copy').textContent=`${done} of ${sessions.length} sessions complete`};
+ $$('.complete-session').forEach(b=>b.addEventListener('click',()=>{b.parentElement.classList.toggle('done');const done=$$('.course-session.done').map(x=>+x.dataset.session);state.course={days,completed:done};save();updateProgress()}));
+ $$('[data-course-topic]').forEach(b=>b.addEventListener('click',()=>{const topic=b.dataset.courseTopic;if(topic==='cram')showView('cram');else if(topic==='review')state.misses.length?startQuiz('mixed',true):startQuiz('mixed');else startQuiz(topic)}));updateProgress();
+}
+function openCourseBuilder(){showView('course');$('#course-builder').hidden=false;$('#generated-course').hidden=true}
+function generateCourse(days){state.course={days,completed:[]};save();$('#course-builder').hidden=true;$('#generated-course').hidden=false;renderCourse(days);window.scrollTo(0,0)}
 $$('.nav-item').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));$('.menu').addEventListener('click',()=>$('.sidebar').classList.toggle('open'));$('#start-practice').addEventListener('click',()=>startQuiz('mixed'));$('#quit-quiz').addEventListener('click',()=>showView('dashboard'));$('#next-question').addEventListener('click',()=>{index++;renderQuestion()});
+$('#generate-course').addEventListener('click',openCourseBuilder);
+$$('input[name="duration"]').forEach(input=>input.addEventListener('change',()=>{const days=+input.value;$$('.duration-options label').forEach(x=>x.classList.toggle('selected',x.contains(input)));const names={1:'1-day emergency cram',2:'2-day focused sprint',3:'3-day fast review',7:'7-day balanced prep',14:'14-day deep-retention course'};$('#builder-summary').textContent=names[days];$('#builder-summary').nextElementSibling.textContent=`About ${courseIntensity[days][1]}${courseIntensity[days][1]%1?'':' '} hour${courseIntensity[days][1]===1?'':'s'} per day · includes a final exam simulation`}));
+$('#course-builder').addEventListener('submit',event=>{event.preventDefault();generateCourse(+$('input[name="duration"]:checked').value)});$('#edit-course').addEventListener('click',openCourseBuilder);
+$$('.nav-item[data-view="course"]').forEach(b=>b.addEventListener('click',()=>{if(state.course){$('#course-builder').hidden=true;$('#generated-course').hidden=false;renderCourse(state.course.days,state.course.completed||[])}}));
 $$('[data-topic]').forEach(b=>b.addEventListener('click',()=>startQuiz(b.dataset.topic)));$$('[data-review]').forEach(b=>b.addEventListener('click',()=>state.misses.length?startQuiz('mixed',true):showView('review')));$$('[data-cram]').forEach(b=>b.addEventListener('click',()=>showView('cram')));$('#review-action').addEventListener('click',()=>startQuiz('mixed',state.misses.length>0));
 $$('.confidence button').forEach(b=>b.addEventListener('click',()=>{const level=+b.dataset.confidence;state.confidence[current.id]=level;$$('.confidence button').forEach(x=>x.classList.toggle('selected',x===b));if(level===3&&current.c===+$('.answer.correct').dataset.answer)state.misses=state.misses.filter(id=>id!==current.id);else if(level<2&&!state.misses.includes(current.id))state.misses.push(current.id);save()}));
 $('#cram-grid').innerHTML=cram.map(([q,a,r])=>`<article class="cram-card"><button>${q}<span>＋</span></button><div class="cram-answer">${a}<b>HANDBOOK ${r}</b></div></article>`).join('');$$('.cram-card button').forEach(b=>b.addEventListener('click',()=>{b.parentElement.classList.toggle('open');b.querySelector('span').textContent=b.parentElement.classList.contains('open')?'−':'＋'}));
