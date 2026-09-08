@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A focused, handbook-grounded two-day study companion for the INCOSE ASEP exam.">
-  <title>ASEP Sprint — 2-Day Exam Prep</title>
+  <meta name="description" content="A personalized, handbook-grounded study companion for the INCOSE ASEP exam.">
+  <title>ASEP Sprint — Personalized Exam Prep</title>
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
@@ -15,6 +15,7 @@
     </a>
     <nav aria-label="Primary navigation">
       <button class="nav-item active" data-view="dashboard"><span>⌂</span>Dashboard</button>
+      <button class="nav-item" data-view="course"><span>▦</span>My course</button>
       <button class="nav-item" data-view="practice"><span>◎</span>Practice</button>
       <button class="nav-item" data-view="review"><span>↻</span>Review misses <b id="miss-count">0</b></button>
       <button class="nav-item" data-view="cram"><span>≡</span>Rapid review</button>
@@ -37,10 +38,13 @@
     <section id="dashboard" class="view active">
       <div class="hero">
         <div>
-          <span class="pill">48 HOURS · ACTIVE RECALL</span>
+          <span class="pill">YOUR TIMELINE · ACTIVE RECALL</span>
           <h2>You have read it once.<br><em>Now make it stick.</em></h2>
           <p>A focused path through the Fifth Edition: retrieve, check the handbook rationale, then repeat what you miss.</p>
-          <button class="primary" id="start-practice">Start focused practice <span>→</span></button>
+          <div class="hero-actions">
+            <button class="primary" id="generate-course">Generate my exam course <span>→</span></button>
+            <button class="secondary-on-dark" id="start-practice">Quick practice</button>
+          </div>
         </div>
         <div class="hero-score">
           <div class="ring" id="mastery-ring"><span id="mastery-value">0%</span><small>mastery</small></div>
@@ -70,6 +74,32 @@
         <article><span>ACCURACY</span><strong id="accuracy">—</strong><small>Across all attempts</small></article>
         <article><span>RETRY QUEUE</span><strong id="retry-total">0</strong><small>Questions to revisit</small></article>
         <article><span>COVERAGE</span><strong id="coverage">0/5</strong><small>Handbook domains touched</small></article>
+      </div>
+    </section>
+
+    <section id="course" class="view">
+      <div class="course-header">
+        <div><span class="eyebrow">HANDBOOK-ONLY EXAM PLAN</span><h2>Build a course around your deadline.</h2><p>Choose your study window. We will prioritize high-yield handbook distinctions, retrieval practice, and repeated exam simulation—without adding outside material.</p></div>
+        <div class="source-seal"><span>✓</span><strong>Source locked</strong><small>INCOSE SE Handbook<br>Fifth Edition</small></div>
+      </div>
+      <form id="course-builder" class="course-builder">
+        <fieldset>
+          <legend>How long should your course be?</legend>
+          <p>Select the number of days you have before the exam.</p>
+          <div class="duration-options">
+            <label><input type="radio" name="duration" value="1"><span><b>1</b> day<small>Emergency cram</small></span></label>
+            <label class="selected"><input type="radio" name="duration" value="2" checked><span><b>2</b> days<small>Focused sprint</small></span></label>
+            <label><input type="radio" name="duration" value="3"><span><b>3</b> days<small>Fast review</small></span></label>
+            <label><input type="radio" name="duration" value="7"><span><b>7</b> days<small>Balanced prep</small></span></label>
+            <label><input type="radio" name="duration" value="14"><span><b>14</b> days<small>Deep retention</small></span></label>
+          </div>
+        </fieldset>
+        <div class="builder-footer"><div><strong id="builder-summary">2-day focused sprint</strong><small>About 3 focused hours per day · includes a final exam simulation</small></div><button class="primary" type="submit">Create my course <span>→</span></button></div>
+      </form>
+      <div id="generated-course" class="generated-course" hidden>
+        <div class="plan-heading"><div><span class="eyebrow">YOUR GENERATED COURSE</span><h3 id="plan-title"></h3><p id="plan-summary"></p></div><button class="edit-plan" id="edit-course">Change length</button></div>
+        <div class="course-progress"><div><i id="course-progress-bar"></i></div><span id="course-progress-copy">0 sessions complete</span></div>
+        <div id="course-days" class="course-days"></div>
       </div>
     </section>
 
